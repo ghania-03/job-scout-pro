@@ -2,8 +2,9 @@ import { ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 import { Job, JobStatus } from '@/types/job';
 import { StatusBadge } from './StatusBadge';
+import { ProposalRatioBar } from './ProposalRatioBar';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { useRelativeTime } from '@/hooks/useRelativeTime';
 
 interface JobCardProps {
   job: Job;
@@ -13,6 +14,7 @@ interface JobCardProps {
 
 export function JobCard({ job, onStatusChange, onViewProposal }: JobCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const relativeTime = useRelativeTime(job.fetchedAt);
 
   return (
     <div className="bg-card border border-border rounded-xl p-4 hover:shadow-soft transition-shadow">
@@ -29,17 +31,8 @@ export function JobCard({ job, onStatusChange, onViewProposal }: JobCardProps) {
           <span className="text-muted-foreground">Budget:</span>
           <span className="ml-1 font-medium text-foreground">{job.budget}</span>
         </div>
-        <div>
-          <span className="text-muted-foreground">Open Ratio:</span>
-          <span className={cn(
-            'ml-1 font-medium',
-            job.openProposalRatio >= 70 ? 'text-status-success' :
-            job.openProposalRatio >= 40 ? 'text-status-warning' : 'text-status-error'
-          )}>
-            {job.openProposalRatio}%
-          </span>
-        </div>
-        <div className="text-muted-foreground">{job.postedTime}</div>
+        <ProposalRatioBar ratio={job.openProposalRatio} />
+        <div className="text-muted-foreground text-xs">{relativeTime}</div>
       </div>
 
       {expanded && (

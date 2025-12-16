@@ -10,6 +10,7 @@ export interface Job {
   budgetValue: number;
   proposal: string;
   postedTime: string;
+  fetchedAt: Date;
   status: JobStatus;
   notes: string;
   location?: string;
@@ -23,6 +24,7 @@ export interface ColumnConfig {
   visible: boolean;
   sortable?: boolean;
   filterable?: boolean;
+  width?: number;
 }
 
 export interface FilterState {
