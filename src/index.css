@@ -6,126 +6,130 @@
 
 @layer base {
   :root {
-    /* Core palette - Professional slate/blue */
-    --background: 220 20% 97%;
-    --foreground: 222 47% 11%;
+    /* Core palette - Soft, premium light theme */
+    --background: 220 16% 96%;
+    --foreground: 224 30% 18%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 224 30% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 224 30% 18%;
 
-    /* Primary - Deep professional blue */
-    --primary: 217 91% 50%;
+    /* Primary - Professional blue accent */
+    --primary: 217 72% 53%;
     --primary-foreground: 0 0% 100%;
-    --primary-muted: 217 91% 95%;
+    --primary-muted: 217 60% 95%;
 
-    /* Secondary - Soft slate */
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222 47% 11%;
+    /* Secondary - Soft gray */
+    --secondary: 220 14% 94%;
+    --secondary-foreground: 224 30% 18%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 220 14% 94%;
+    --muted-foreground: 220 12% 50%;
 
-    --accent: 217 91% 97%;
-    --accent-foreground: 217 91% 40%;
+    --accent: 217 60% 96%;
+    --accent-foreground: 217 72% 45%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 217 91% 50%;
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    --ring: 217 72% 53%;
 
     --radius: 0.5rem;
 
-    /* Status colors */
-    --status-success: 142 71% 45%;
-    --status-success-bg: 142 76% 95%;
-    --status-warning: 38 92% 50%;
-    --status-warning-bg: 38 92% 95%;
-    --status-error: 0 84% 60%;
-    --status-error-bg: 0 84% 97%;
-    --status-pending: 217 91% 50%;
-    --status-pending-bg: 217 91% 97%;
-    --status-neutral: 220 9% 46%;
-    --status-neutral-bg: 220 14% 96%;
+    /* Status colors - Balanced and professional */
+    --status-success: 152 60% 40%;
+    --status-success-bg: 152 50% 94%;
+    --status-warning: 38 85% 48%;
+    --status-warning-bg: 38 70% 94%;
+    --status-error: 0 65% 50%;
+    --status-error-bg: 0 60% 96%;
+    --status-pending: 217 72% 53%;
+    --status-pending-bg: 217 60% 96%;
+    --status-neutral: 220 12% 50%;
+    --status-neutral-bg: 220 14% 94%;
 
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 9% 46%;
-    --sidebar-primary: 217 91% 50%;
+    --sidebar-foreground: 220 12% 50%;
+    --sidebar-primary: 217 72% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 91% 97%;
-    --sidebar-accent-foreground: 217 91% 40%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217 91% 50%;
+    --sidebar-accent: 217 60% 96%;
+    --sidebar-accent-foreground: 217 72% 45%;
+    --sidebar-border: 220 13% 90%;
+    --sidebar-ring: 217 72% 53%;
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(220 9% 46% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(220 9% 46% / 0.1), 0 2px 4px -2px hsl(220 9% 46% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(220 9% 46% / 0.1), 0 4px 6px -4px hsl(220 9% 46% / 0.1);
+    /* Shadows - Subtle and elegant */
+    --shadow-sm: 0 1px 2px 0 hsl(220 20% 30% / 0.04);
+    --shadow-md: 0 4px 8px -2px hsl(220 20% 30% / 0.06), 0 2px 4px -2px hsl(220 20% 30% / 0.04);
+    --shadow-lg: 0 12px 20px -4px hsl(220 20% 30% / 0.08), 0 4px 8px -4px hsl(220 20% 30% / 0.04);
 
     /* Table specific */
-    --table-header-bg: 220 20% 98%;
-    --table-row-hover: 217 91% 99%;
-    --table-border: 220 13% 93%;
+    --table-header-bg: 220 16% 97%;
+    --table-row-hover: 217 60% 98%;
+    --table-border: 220 13% 92%;
   }
 
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    /* Dark theme - Deep charcoal, not pure black */
+    --background: 224 30% 10%;
+    --foreground: 220 16% 92%;
 
-    --card: 222 47% 9%;
-    --card-foreground: 210 40% 98%;
+    --card: 224 25% 13%;
+    --card-foreground: 220 16% 92%;
 
-    --popover: 222 47% 9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 224 25% 13%;
+    --popover-foreground: 220 16% 92%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 6%;
-    --primary-muted: 217 50% 15%;
+    --primary: 217 72% 60%;
+    --primary-foreground: 224 30% 10%;
+    --primary-muted: 217 40% 18%;
 
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 224 20% 18%;
+    --secondary-foreground: 220 16% 92%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 224 20% 18%;
+    --muted-foreground: 220 14% 58%;
 
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 224 20% 18%;
+    --accent-foreground: 217 72% 70%;
 
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 220 16% 92%;
 
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 212 27% 84%;
+    --border: 224 18% 20%;
+    --input: 224 18% 20%;
+    --ring: 217 72% 60%;
 
-    --status-success: 142 71% 45%;
-    --status-success-bg: 142 50% 12%;
-    --status-warning: 38 92% 50%;
-    --status-warning-bg: 38 50% 12%;
-    --status-error: 0 84% 60%;
-    --status-error-bg: 0 50% 12%;
-    --status-pending: 217 91% 60%;
-    --status-pending-bg: 217 50% 15%;
-    --status-neutral: 215 20% 65%;
-    --status-neutral-bg: 217 33% 17%;
+    /* Status colors for dark mode */
+    --status-success: 152 55% 48%;
+    --status-success-bg: 152 35% 15%;
+    --status-warning: 38 80% 52%;
+    --status-warning-bg: 38 40% 15%;
+    --status-error: 0 60% 55%;
+    --status-error-bg: 0 35% 15%;
+    --status-pending: 217 72% 60%;
+    --status-pending-bg: 217 40% 18%;
+    --status-neutral: 220 14% 58%;
+    --status-neutral-bg: 224 20% 18%;
 
-    --sidebar-background: 222 47% 6%;
-    --sidebar-foreground: 215 20% 65%;
-    --sidebar-primary: 217 91% 60%;
+    /* Sidebar */
+    --sidebar-background: 224 30% 10%;
+    --sidebar-foreground: 220 14% 58%;
+    --sidebar-primary: 217 72% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 17%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-accent: 224 20% 18%;
+    --sidebar-accent-foreground: 220 16% 92%;
+    --sidebar-border: 224 18% 18%;
+    --sidebar-ring: 217 72% 60%;
 
-    --table-header-bg: 222 47% 8%;
-    --table-row-hover: 217 33% 12%;
-    --table-border: 217 33% 17%;
+    /* Table specific */
+    --table-header-bg: 224 25% 11%;
+    --table-row-hover: 224 20% 16%;
+    --table-border: 224 18% 18%;
   }
 }
 
@@ -134,16 +138,21 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   }
 }
 
 @layer components {
   /* Status badges */
   .status-badge {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors;
+    @apply inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium transition-colors;
   }
   
   .status-success {
@@ -173,7 +182,7 @@
 
   /* Metric cards */
   .metric-card {
-    @apply bg-card rounded-xl border border-border p-5 transition-all duration-200;
+    @apply bg-card rounded-xl border border-border p-4 transition-all duration-200;
     box-shadow: var(--shadow-sm);
   }
   
@@ -181,41 +190,23 @@
     box-shadow: var(--shadow-md);
   }
 
-  /* Table styles */
-  .data-table {
-    @apply w-full border-collapse;
-  }
-  
-  .data-table th {
-    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground;
-    background-color: hsl(var(--table-header-bg));
-  }
-  
-  .data-table td {
-    @apply px-4 py-3.5 text-sm border-t;
-    border-color: hsl(var(--table-border));
-  }
-  
-  .data-table tr:hover td {
-    background-color: hsl(var(--table-row-hover));
-  }
-
   /* Custom scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
   
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
+    @apply bg-muted/30 rounded-full;
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-border rounded-full;
+    @apply bg-border hover:bg-muted-foreground/30 rounded-full transition-colors;
   }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/30;
+
+  /* Ensure horizontal scrollbar always visible when needed */
+  .custom-scrollbar {
+    scrollbar-gutter: stable;
   }
 }
 
@@ -248,5 +239,12 @@
       opacity: 1;
       transform: translateX(0);
     }
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
