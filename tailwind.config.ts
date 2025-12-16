@@ -22,6 +22,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          muted: "hsl(var(--primary-muted))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -57,6 +58,18 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        status: {
+          success: "hsl(var(--status-success))",
+          "success-bg": "hsl(var(--status-success-bg))",
+          warning: "hsl(var(--status-warning))",
+          "warning-bg": "hsl(var(--status-warning-bg))",
+          error: "hsl(var(--status-error))",
+          "error-bg": "hsl(var(--status-error-bg))",
+          pending: "hsl(var(--status-pending))",
+          "pending-bg": "hsl(var(--status-pending-bg))",
+          neutral: "hsl(var(--status-neutral))",
+          "neutral-bg": "hsl(var(--status-neutral-bg))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -65,25 +78,26 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+        "pulse-soft": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.7" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-soft": "pulse-soft 2s ease-in-out infinite",
+      },
+      boxShadow: {
+        soft: "0 2px 8px -2px hsl(var(--foreground) / 0.08)",
+        card: "0 4px 12px -4px hsl(var(--foreground) / 0.1)",
       },
     },
   },
