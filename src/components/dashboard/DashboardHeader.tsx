@@ -1,4 +1,4 @@
-import { Bot, Bell, Sun, Moon, User, Settings, LogOut } from 'lucide-react';
+import { Bot, Bell, Sun, Moon, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/hooks/useTheme';
 import {
@@ -63,10 +63,6 @@ export function DashboardHeader() {
             <DropdownMenuItem className="cursor-pointer">
               <User className="w-4 h-4 mr-2" />
               Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
-              <Settings className="w-4 h-4 mr-2" />
-              Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer text-status-error focus:text-status-error">

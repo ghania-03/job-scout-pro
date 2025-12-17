@@ -56,6 +56,7 @@ export function PortfolioSection({ portfolio, onUpdate }: PortfolioSectionProps)
       const content = await readFileContent(file);
       
       onUpdate({
+        ...portfolio,
         fileName: file.name,
         fileType: file.type,
         content,
@@ -118,6 +119,7 @@ export function PortfolioSection({ portfolio, onUpdate }: PortfolioSectionProps)
     }
 
     onUpdate({
+      ...portfolio,
       fileName: null,
       fileType: 'text/plain',
       content: textInput,
@@ -132,6 +134,7 @@ export function PortfolioSection({ portfolio, onUpdate }: PortfolioSectionProps)
 
   const handleReset = () => {
     onUpdate({
+      ...portfolio,
       fileName: null,
       fileType: null,
       content: '',
