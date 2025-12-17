@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/hooks/useTheme";
 import Index from "./pages/Index";
 import JobQueue from "./pages/JobQueue";
 import JobFilters from "./pages/JobFilters";
+import AIPortfolio from "./pages/AIPortfolio";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/job-queue" element={<JobQueue />} />
             <Route path="/job-filters" element={<JobFilters />} />
+            <Route path="/ai-portfolio" element={<AIPortfolio />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
