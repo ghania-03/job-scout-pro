@@ -1,14 +1,9 @@
-import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
-  ListTodo,
   Filter,
-  CheckSquare,
   Sparkles,
-  BarChart3,
   History,
-  Settings,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
@@ -18,13 +13,9 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-  { icon: ListTodo, label: 'Job Queue', path: '/job-queue' },
   { icon: Filter, label: 'Job Filters', path: '/job-filters' },
-  { icon: CheckSquare, label: 'Qualification Rules', path: '/qualification-rules' },
   { icon: Sparkles, label: 'AI & Portfolio', path: '/ai-portfolio' },
-  { icon: BarChart3, label: 'Statistics', path: '/statistics' },
   { icon: History, label: 'Activity Logs', path: '/activity-logs' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
 interface DashboardSidebarProps {

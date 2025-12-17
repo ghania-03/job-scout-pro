@@ -2,30 +2,39 @@ import { useState } from 'react';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { PortfolioSection } from '@/components/portfolio/PortfolioSection';
-import { AISettingsSection } from '@/components/portfolio/AISettingsSection';
-import { ProposalHistorySection } from '@/components/portfolio/ProposalHistorySection';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Save, Copy, RefreshCw, Sparkles, Bot } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+export interface PortfolioItem {
+  id: string;
+  title: string;
+  description: string;
+  skills: string[];
+  link?: string;
+  createdAt: Date;
+}
 
 export interface PortfolioData {
   fileName: string | null;
   fileType: string | null;
   content: string;
   lastUpdated: Date | null;
-}
-
-export interface AISettings {
-  proposalLength: 'short' | 'medium' | 'detailed';
-  proposalTone: 'formal' | 'friendly' | 'neutral';
-}
-
-export interface ProposalHistoryItem {
-  id: string;
-  jobId: string;
-  jobTitle: string;
-  dateGenerated: Date;
-  proposal: string;
+  items: PortfolioItem[];
 }
 
 const AIPortfolio = () => {
+  const { toast } = useToast();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     return localStorage.getItem('bd-sidebar-collapsed') === 'true';
   });
@@ -37,6 +46,7 @@ const AIPortfolio = () => {
       return {
         ...parsed,
         lastUpdated: parsed.lastUpdated ? new Date(parsed.lastUpdated) : null,
+        items: parsed.items || [],
       };
     }
     return {
@@ -44,87 +54,76 @@ const AIPortfolio = () => {
       fileType: null,
       content: '',
       lastUpdated: null,
+      items: [],
     };
   });
 
-  const [aiSettings, setAISettings] = useState<AISettings>(() => {
-    const saved = localStorage.getItem('bd-ai-settings');
-    if (saved) return JSON.parse(saved);
-    return {
-      proposalLength: 'medium',
-      proposalTone: 'neutral',
-    };
+  const [aiPrompt, setAiPrompt] = useState(() => {
+    return localStorage.getItem('bd-ai-prompt') || 
+      'Generate a professional proposal for this Upwork job. Use my portfolio experience to highlight relevant skills. Keep the tone professional and concise. Include specific examples from my past work that relate to the job requirements.';
   });
 
-  const [proposalHistory, setProposalHistory] = useState<ProposalHistoryItem[]>(() => {
-    const saved = localStorage.getItem('bd-proposal-history');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      return parsed.map((item: any) => ({
-        ...item,
-        dateGenerated: new Date(item.dateGenerated),
-      }));
-    }
-    // Mock data for demonstration
-    return [
-      {
-        id: '1',
-        jobId: 'job-1',
-        jobTitle: 'React Developer for E-commerce Platform',
-        dateGenerated: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        proposal: 'Dear Hiring Manager,\n\nI am excited to apply for the React Developer position. With over 5 years of experience building scalable e-commerce solutions, I am confident in my ability to deliver exceptional results for your project.\n\nKey highlights from my experience:\n• Built a high-traffic e-commerce platform handling 10K+ daily orders\n• Implemented advanced cart functionality with real-time inventory updates\n• Optimized performance resulting in 40% faster page loads\n\nI would love to discuss how my skills align with your needs.\n\nBest regards',
-      },
-      {
-        id: '2',
-        jobId: 'job-2',
-        jobTitle: 'Full Stack Developer - SaaS Application',
-        dateGenerated: new Date(Date.now() - 5 * 60 * 60 * 1000),
-        proposal: 'Hello,\n\nI noticed your posting for a Full Stack Developer and believe my background makes me an excellent fit. I specialize in building SaaS applications with modern tech stacks.\n\nRecent accomplishments:\n• Developed a multi-tenant SaaS platform serving 500+ businesses\n• Implemented subscription billing with Stripe integration\n• Built real-time collaboration features using WebSockets\n\nLooking forward to contributing to your project.\n\nBest,',
-      },
-      {
-        id: '3',
-        jobId: 'job-3',
-        jobTitle: 'Senior Frontend Engineer - Fintech Startup',
-        dateGenerated: new Date(Date.now() - 24 * 60 * 60 * 1000),
-        proposal: 'Hi there,\n\nYour fintech opportunity caught my attention. Having worked extensively in the financial technology space, I understand the unique challenges of building secure, compliant applications.\n\nRelevant experience:\n• Led frontend development for a trading platform with 50K+ users\n• Implemented real-time data visualization dashboards\n• Ensured PCI-DSS compliance in payment interfaces\n\nI am eager to bring my expertise to your team.\n\nRegards',
-      },
-    ];
+  const [chatbotModel, setChatbotModel] = useState(() => {
+    return localStorage.getItem('bd-chatbot-model') || 'chatgpt';
   });
+
+  const [previewProposal, setPreviewProposal] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handlePortfolioUpdate = (newPortfolio: PortfolioData) => {
     setPortfolio(newPortfolio);
     localStorage.setItem('bd-portfolio', JSON.stringify(newPortfolio));
   };
 
-  const handleSettingsUpdate = (newSettings: AISettings) => {
-    setAISettings(newSettings);
-    localStorage.setItem('bd-ai-settings', JSON.stringify(newSettings));
+  const handleSavePrompt = () => {
+    localStorage.setItem('bd-ai-prompt', aiPrompt);
+    toast({
+      title: 'Prompt Saved',
+      description: 'Your AI proposal command has been saved.',
+    });
   };
 
-  const handleProposalUpdate = (updatedProposal: ProposalHistoryItem) => {
-    const updated = proposalHistory.map((p) =>
-      p.id === updatedProposal.id ? updatedProposal : p
-    );
-    setProposalHistory(updated);
-    localStorage.setItem('bd-proposal-history', JSON.stringify(updated));
+  const handleCopyPrompt = () => {
+    navigator.clipboard.writeText(aiPrompt);
+    toast({
+      title: 'Copied',
+      description: 'Prompt copied to clipboard.',
+    });
   };
 
-  const handleRegenerateAll = () => {
-    // Simulate regenerating all proposals
-    const updated = proposalHistory.map((p) => ({
-      ...p,
-      dateGenerated: new Date(),
-      proposal: p.proposal + '\n\n[Regenerated with updated portfolio and settings]',
-    }));
-    setProposalHistory(updated);
-    localStorage.setItem('bd-proposal-history', JSON.stringify(updated));
+  const handleGeneratePreview = () => {
+    setIsGenerating(true);
+    // Simulate AI generation
+    setTimeout(() => {
+      setPreviewProposal(
+        `Dear Hiring Manager,\n\nI am excited to apply for this position. Based on my portfolio and experience, I believe I am an excellent fit for your project.\n\n${portfolio.content ? 'Drawing from my portfolio:\n' + portfolio.content.substring(0, 200) + '...\n\n' : ''}I would love to discuss how my skills align with your needs.\n\nBest regards`
+      );
+      setIsGenerating(false);
+      toast({
+        title: 'Preview Generated',
+        description: 'Sample proposal generated based on your prompt.',
+      });
+    }, 1500);
+  };
+
+  const handleModelChange = (value: string) => {
+    setChatbotModel(value);
+    localStorage.setItem('bd-chatbot-model', value);
+    toast({
+      title: 'Model Updated',
+      description: `AI model set to ${value === 'chatgpt' ? 'ChatGPT' : value}.`,
+    });
   };
 
   return (
     <div className="flex h-screen w-full bg-background overflow-hidden">
       <DashboardSidebar
         collapsed={sidebarCollapsed}
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onToggle={() => {
+          const newState = !sidebarCollapsed;
+          setSidebarCollapsed(newState);
+          localStorage.setItem('bd-sidebar-collapsed', String(newState));
+        }}
       />
 
       <div className="flex-1 flex flex-col min-w-0">
@@ -137,26 +136,96 @@ const AIPortfolio = () => {
                 AI & Portfolio
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                Manage your portfolio and configure AI proposal generation settings
+                Manage your portfolio and configure AI proposal generation
               </p>
             </div>
 
+            {/* Chatbot Model Selection - Minimal, at top */}
+            <Card className="border-border">
+              <CardHeader className="py-3 px-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Bot className="w-4 h-4 text-primary" />
+                    <CardTitle className="text-sm font-medium">AI Model</CardTitle>
+                  </div>
+                  <Select value={chatbotModel} onValueChange={handleModelChange}>
+                    <SelectTrigger className="w-[160px] h-8 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="chatgpt">ChatGPT</SelectItem>
+                      <SelectItem value="gpt4" disabled>GPT-4 (Coming Soon)</SelectItem>
+                      <SelectItem value="claude" disabled>Claude (Coming Soon)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardHeader>
+            </Card>
+
+            {/* Portfolio Management */}
             <PortfolioSection
               portfolio={portfolio}
               onUpdate={handlePortfolioUpdate}
             />
 
-            <AISettingsSection
-              settings={aiSettings}
-              onUpdate={handleSettingsUpdate}
-              onRegenerateAll={handleRegenerateAll}
-              hasPortfolio={!!portfolio.content}
-            />
+            {/* AI Proposal Command Section */}
+            <Card className="border-border">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  <CardTitle className="text-base font-medium">AI Proposal Command</CardTitle>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  This prompt is used to generate job-specific proposals on the Dashboard
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="ai-prompt" className="text-sm font-medium">
+                    Prompt / Command
+                  </Label>
+                  <Textarea
+                    id="ai-prompt"
+                    value={aiPrompt}
+                    onChange={(e) => setAiPrompt(e.target.value)}
+                    placeholder="Enter your AI prompt for generating proposals..."
+                    className="min-h-[120px] resize-none"
+                  />
+                </div>
 
-            <ProposalHistorySection
-              history={proposalHistory}
-              onProposalUpdate={handleProposalUpdate}
-            />
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={handleSavePrompt}>
+                    <Save className="w-3.5 h-3.5 mr-1.5" />
+                    Save
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={handleCopyPrompt}>
+                    <Copy className="w-3.5 h-3.5 mr-1.5" />
+                    Copy
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={handleGeneratePreview}
+                    disabled={isGenerating}
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${isGenerating ? 'animate-spin' : ''}`} />
+                    {isGenerating ? 'Generating...' : 'Preview'}
+                  </Button>
+                </div>
+
+                {/* Preview Area */}
+                {previewProposal && (
+                  <div className="mt-4 p-4 bg-muted/50 rounded-lg border border-border">
+                    <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+                      Preview Output
+                    </Label>
+                    <p className="text-sm text-foreground whitespace-pre-wrap">
+                      {previewProposal}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </main>
       </div>
