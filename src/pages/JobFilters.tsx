@@ -62,37 +62,39 @@ const countries = [
 
 export interface FilterState {
   platforms: string[];
-  inviteSent: boolean;
-  skipInviteSent: boolean;
+  includeInviteSent: boolean;
   unansweredInvitesCount: number | null;
   keywords: string[];
-  budgetType: 'any' | 'hourly' | 'fixed';
+  budgetType: 'all' | 'hourly' | 'fixed';
   minBudget: number | null;
   maxBudget: number | null;
   includedCountries: string[];
   excludedCountries: string[];
   phoneVerified: boolean | null;
   paymentVerified: boolean | null;
-  minApprovals: number | null;
-  hiringRate: [number, number];
+  proposalsMin: number;
+  proposalsMax: number;
+  hiringRateMin: number;
+  hiringRateMax: number;
   clientRating: number;
 }
 
 const defaultFilters: FilterState = {
   platforms: ['upwork'],
-  inviteSent: false,
-  skipInviteSent: true,
+  includeInviteSent: false,
   unansweredInvitesCount: null,
   keywords: [],
-  budgetType: 'any',
+  budgetType: 'all',
   minBudget: null,
   maxBudget: null,
   includedCountries: [],
   excludedCountries: [],
   phoneVerified: null,
   paymentVerified: null,
-  minApprovals: null,
-  hiringRate: [0, 100],
+  proposalsMin: 5,
+  proposalsMax: 10,
+  hiringRateMin: 0,
+  hiringRateMax: 100,
   clientRating: 0,
 };
 
@@ -110,7 +112,9 @@ export default function JobFilters() {
   const [keywordInput, setKeywordInput] = useState('');
   const [keywordSuggestionsOpen, setKeywordSuggestionsOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
-  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(true);
+  const [platformOpen, setPlatformOpen] = useState(false);
+  const [budgetOpen, setBudgetOpen] = useState(false);
 
   const filteredKeywordSuggestions = keywordSuggestions.filter(
     (kw) =>
@@ -175,13 +179,13 @@ export default function JobFilters() {
     if (filters.platforms.length > 0) {
       tags.push({ label: `Platform: ${filters.platforms.join(', ')}`, key: 'platforms' });
     }
-    if (filters.skipInviteSent) {
-      tags.push({ label: 'Skip Invite Sent', key: 'skipInviteSent' });
+    if (!filters.includeInviteSent) {
+      tags.push({ label: 'Skip Invite Sent', key: 'includeInviteSent' });
     }
     filters.keywords.forEach((kw) => {
       tags.push({ label: kw, key: `keyword-${kw}` });
     });
-    if (filters.budgetType !== 'any') {
+    if (filters.budgetType !== 'all') {
       tags.push({ label: `Budget: ${filters.budgetType}`, key: 'budgetType' });
     }
     if (filters.minBudget) {
@@ -239,74 +243,332 @@ export default function JobFilters() {
               </div>
             )}
 
-            {/* Platform Filter */}
-            <Card className="border-border">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base font-medium">Platform</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {platforms.map((platform) => (
-                  <div key={platform.id} className="flex items-center gap-2">
-                    <Checkbox
-                      id={platform.id}
-                      checked={filters.platforms.includes(platform.id)}
-                      disabled={platform.disabled}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          updateFilters({ platforms: [...filters.platforms, platform.id] });
-                        } else {
-                          updateFilters({
-                            platforms: filters.platforms.filter((p) => p !== platform.id),
-                          });
-                        }
-                      }}
-                    />
-                    <Label
-                      htmlFor={platform.id}
-                      className={`text-sm ${platform.disabled ? 'text-muted-foreground' : ''}`}
-                    >
-                      {platform.label}
-                    </Label>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            {/* Advanced Filters - Expanded by default at top */}
+            <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
+              <Card className="border-border">
+                <CollapsibleTrigger asChild>
+                  <CardHeader className="pb-3 cursor-pointer hover:bg-muted/30 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-base font-medium">
+                        Advanced Filters
+                      </CardTitle>
+                      {advancedOpen ? (
+                        <ChevronUp className="w-4 h-4" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
+                    </div>
+                  </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <CardContent className="space-y-4 pt-0">
+                    {/* Invite Sent */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium">Invite Sent</Label>
+                      <p className="text-xs text-muted-foreground">
+                        {filters.includeInviteSent 
+                          ? 'Including jobs where invite is sent' 
+                          : 'Skipping jobs where invite is sent'}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="include-invite"
+                          checked={filters.includeInviteSent}
+                          onCheckedChange={(checked) =>
+                            updateFilters({ includeInviteSent: !!checked })
+                          }
+                        />
+                        <Label htmlFor="include-invite" className="text-sm">
+                          Include jobs with invites already sent
+                        </Label>
+                      </div>
+                    </div>
 
-            {/* Invite Signals */}
-            <Card className="border-border">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base font-medium">Invite Sent</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="skip-invite"
-                    checked={filters.skipInviteSent}
-                    onCheckedChange={(checked) =>
-                      updateFilters({ skipInviteSent: !!checked })
-                    }
-                  />
-                  <Label htmlFor="skip-invite" className="text-sm">
-                    Skip jobs with invites already sent
-                  </Label>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-sm">Unanswered Invites Count (max)</Label>
-                  <Input
-                    type="number"
-                    min={0}
-                    placeholder="Any"
-                    value={filters.unansweredInvitesCount ?? ''}
-                    onChange={(e) =>
-                      updateFilters({
-                        unansweredInvitesCount: e.target.value ? Number(e.target.value) : null,
-                      })
-                    }
-                    className="w-32 h-9"
-                  />
-                </div>
-              </CardContent>
-            </Card>
+                    {/* No. of Proposals */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium">
+                        No. of Proposals: {filters.proposalsMin} - {filters.proposalsMax}
+                      </Label>
+                      <Slider
+                        value={[filters.proposalsMin, filters.proposalsMax]}
+                        onValueChange={(value) =>
+                          updateFilters({ proposalsMin: value[0], proposalsMax: value[1] })
+                        }
+                        min={0}
+                        max={10}
+                        step={1}
+                        className="w-full max-w-xs"
+                      />
+                      <div className="flex gap-4">
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground">Min</Label>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={filters.proposalsMax}
+                            value={filters.proposalsMin}
+                            onChange={(e) =>
+                              updateFilters({ proposalsMin: Math.min(Number(e.target.value), filters.proposalsMax) })
+                            }
+                            className="w-20 h-8"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground">Max</Label>
+                          <Input
+                            type="number"
+                            min={filters.proposalsMin}
+                            max={10}
+                            value={filters.proposalsMax}
+                            onChange={(e) =>
+                              updateFilters({ proposalsMax: Math.min(Math.max(Number(e.target.value), filters.proposalsMin), 10) })
+                            }
+                            className="w-20 h-8"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Hiring Rate */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium">
+                        Hiring Rate: {filters.hiringRateMin}% - {filters.hiringRateMax}%
+                      </Label>
+                      <Slider
+                        value={[filters.hiringRateMin, filters.hiringRateMax]}
+                        onValueChange={(value) =>
+                          updateFilters({ hiringRateMin: value[0], hiringRateMax: value[1] })
+                        }
+                        min={0}
+                        max={100}
+                        step={5}
+                        className="w-full max-w-xs"
+                      />
+                      <div className="flex gap-4">
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground">Min %</Label>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={filters.hiringRateMax}
+                            value={filters.hiringRateMin}
+                            onChange={(e) =>
+                              updateFilters({ hiringRateMin: Math.min(Number(e.target.value), filters.hiringRateMax) })
+                            }
+                            className="w-20 h-8"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground">Max %</Label>
+                          <Input
+                            type="number"
+                            min={filters.hiringRateMin}
+                            max={100}
+                            value={filters.hiringRateMax}
+                            onChange={(e) =>
+                              updateFilters({ hiringRateMax: Math.max(Number(e.target.value), filters.hiringRateMin) })
+                            }
+                            className="w-20 h-8"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Client Rating */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium">
+                        Minimum Client Rating: {filters.clientRating > 0 ? `${filters.clientRating.toFixed(1)}+` : 'Any'}
+                      </Label>
+                      <Slider
+                        value={[filters.clientRating]}
+                        onValueChange={(value) => updateFilters({ clientRating: value[0] })}
+                        min={0}
+                        max={5}
+                        step={0.1}
+                        className="w-full max-w-xs"
+                      />
+                      <div className="flex items-center gap-4">
+                        <div className="space-y-1">
+                          <Label className="text-xs text-muted-foreground">Rating</Label>
+                          <Input
+                            type="number"
+                            min={0}
+                            max={5}
+                            step={0.1}
+                            value={filters.clientRating}
+                            onChange={(e) =>
+                              updateFilters({ clientRating: Math.min(Math.max(Number(e.target.value), 0), 5) })
+                            }
+                            className="w-20 h-8"
+                          />
+                        </div>
+                        <div className="flex gap-1 mt-4">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`w-4 h-4 ${
+                                star <= Math.floor(filters.clientRating)
+                                  ? 'fill-status-pending text-status-pending'
+                                  : star <= filters.clientRating
+                                  ? 'fill-status-pending/50 text-status-pending'
+                                  : 'text-muted-foreground'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Client Verification */}
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium">Client Verification</Label>
+                      <div className="flex gap-4">
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            id="phone-verified"
+                            checked={filters.phoneVerified === true}
+                            onCheckedChange={(checked) =>
+                              updateFilters({ phoneVerified: checked ? true : null })
+                            }
+                          />
+                          <Label htmlFor="phone-verified" className="text-sm">
+                            Phone Verified
+                          </Label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            id="payment-verified"
+                            checked={filters.paymentVerified === true}
+                            onCheckedChange={(checked) =>
+                              updateFilters({ paymentVerified: checked ? true : null })
+                            }
+                          />
+                          <Label htmlFor="payment-verified" className="text-sm">
+                            Payment Verified
+                          </Label>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
+
+            {/* Platform Filter - Collapsed by default */}
+            <Collapsible open={platformOpen} onOpenChange={setPlatformOpen}>
+              <Card className="border-border">
+                <CollapsibleTrigger asChild>
+                  <CardHeader className="pb-3 cursor-pointer hover:bg-muted/30 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-base font-medium">Platform</CardTitle>
+                      {platformOpen ? (
+                        <ChevronUp className="w-4 h-4" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
+                    </div>
+                  </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <CardContent className="space-y-2 pt-0">
+                    {platforms.map((platform) => (
+                      <div key={platform.id} className="flex items-center gap-2">
+                        <Checkbox
+                          id={platform.id}
+                          checked={filters.platforms.includes(platform.id)}
+                          disabled={platform.disabled}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              updateFilters({ platforms: [...filters.platforms, platform.id] });
+                            } else {
+                              updateFilters({
+                                platforms: filters.platforms.filter((p) => p !== platform.id),
+                              });
+                            }
+                          }}
+                        />
+                        <Label
+                          htmlFor={platform.id}
+                          className={`text-sm ${platform.disabled ? 'text-muted-foreground' : ''}`}
+                        >
+                          {platform.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
+
+            {/* Budget - Collapsed by default */}
+            <Collapsible open={budgetOpen} onOpenChange={setBudgetOpen}>
+              <Card className="border-border">
+                <CollapsibleTrigger asChild>
+                  <CardHeader className="pb-3 cursor-pointer hover:bg-muted/30 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-base font-medium">Budget</CardTitle>
+                      {budgetOpen ? (
+                        <ChevronUp className="w-4 h-4" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4" />
+                      )}
+                    </div>
+                  </CardHeader>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <CardContent className="space-y-4 pt-0">
+                    <div className="flex gap-4">
+                      {(['all', 'hourly', 'fixed'] as const).map((type) => (
+                        <div key={type} className="flex items-center gap-2">
+                          <Checkbox
+                            id={`budget-${type}`}
+                            checked={filters.budgetType === type}
+                            onCheckedChange={() => updateFilters({ budgetType: type })}
+                          />
+                          <Label htmlFor={`budget-${type}`} className="text-sm capitalize">
+                            {type}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                    {filters.budgetType !== 'all' && (
+                      <div className="flex gap-4">
+                        <div className="space-y-1.5">
+                          <Label className="text-sm">
+                            Min {filters.budgetType === 'hourly' ? '$/hr' : '$'} <span className="text-destructive">*</span>
+                          </Label>
+                          <Input
+                            type="number"
+                            min={0}
+                            placeholder="Required"
+                            value={filters.minBudget ?? ''}
+                            onChange={(e) =>
+                              updateFilters({ minBudget: e.target.value ? Number(e.target.value) : null })
+                            }
+                            className="w-32 h-9"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-sm">
+                            Max {filters.budgetType === 'hourly' ? '$/hr' : '$'}
+                          </Label>
+                          <Input
+                            type="number"
+                            min={0}
+                            placeholder="Unlimited"
+                            value={filters.maxBudget ?? ''}
+                            onChange={(e) =>
+                              updateFilters({ maxBudget: e.target.value ? Number(e.target.value) : null })
+                            }
+                            className="w-32 h-9"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
 
             {/* Keywords */}
             <Card className="border-border">
@@ -365,57 +627,6 @@ export default function JobFilters() {
                     ))}
                   </div>
                 )}
-              </CardContent>
-            </Card>
-
-            {/* Budget */}
-            <Card className="border-border">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base font-medium">Budget</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex gap-4">
-                  {(['any', 'hourly', 'fixed'] as const).map((type) => (
-                    <div key={type} className="flex items-center gap-2">
-                      <Checkbox
-                        id={`budget-${type}`}
-                        checked={filters.budgetType === type}
-                        onCheckedChange={() => updateFilters({ budgetType: type })}
-                      />
-                      <Label htmlFor={`budget-${type}`} className="text-sm capitalize">
-                        {type}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex gap-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-sm">Min Budget ($)</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      placeholder="No min"
-                      value={filters.minBudget ?? ''}
-                      onChange={(e) =>
-                        updateFilters({ minBudget: e.target.value ? Number(e.target.value) : null })
-                      }
-                      className="w-32 h-9"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-sm">Max Budget ($)</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      placeholder="No max"
-                      value={filters.maxBudget ?? ''}
-                      onChange={(e) =>
-                        updateFilters({ maxBudget: e.target.value ? Number(e.target.value) : null })
-                      }
-                      className="w-32 h-9"
-                    />
-                  </div>
-                </div>
               </CardContent>
             </Card>
 
@@ -486,125 +697,6 @@ export default function JobFilters() {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Client Info & Advanced */}
-            <Collapsible open={advancedOpen} onOpenChange={setAdvancedOpen}>
-              <Card className="border-border">
-                <CollapsibleTrigger asChild>
-                  <CardHeader className="pb-3 cursor-pointer hover:bg-muted/30 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-base font-medium">
-                        Client Info & Advanced Filters
-                      </CardTitle>
-                      {advancedOpen ? (
-                        <ChevronUp className="w-4 h-4" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4" />
-                      )}
-                    </div>
-                  </CardHeader>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <CardContent className="space-y-4 pt-0">
-                    {/* Client Verification */}
-                    <div className="space-y-3">
-                      <Label className="text-sm font-medium">Client Verification</Label>
-                      <div className="flex gap-4">
-                        <div className="flex items-center gap-2">
-                          <Checkbox
-                            id="phone-verified"
-                            checked={filters.phoneVerified === true}
-                            onCheckedChange={(checked) =>
-                              updateFilters({ phoneVerified: checked ? true : null })
-                            }
-                          />
-                          <Label htmlFor="phone-verified" className="text-sm">
-                            Phone Verified
-                          </Label>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Checkbox
-                            id="payment-verified"
-                            checked={filters.paymentVerified === true}
-                            onCheckedChange={(checked) =>
-                              updateFilters({ paymentVerified: checked ? true : null })
-                            }
-                          />
-                          <Label htmlFor="payment-verified" className="text-sm">
-                            Payment Verified
-                          </Label>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Number of Approvals */}
-                    <div className="space-y-1.5">
-                      <Label className="text-sm">No. of Proposals</Label>
-                      <Input
-                        type="number"
-                        min={0}
-                        placeholder="Any"
-                        value={filters.minApprovals ?? ''}
-                        onChange={(e) =>
-                          updateFilters({
-                            minApprovals: e.target.value ? Number(e.target.value) : null,
-                          })
-                        }
-                        className="w-32 h-9"
-                      />
-                    </div>
-
-                    {/* Hiring Rate */}
-                    <div className="space-y-3">
-                      <Label className="text-sm">
-                        Hiring Rate: {filters.hiringRate[0]}% - {filters.hiringRate[1]}%
-                      </Label>
-                      <Slider
-                        value={filters.hiringRate}
-                        onValueChange={(value) =>
-                          updateFilters({ hiringRate: value as [number, number] })
-                        }
-                        min={0}
-                        max={100}
-                        step={5}
-                        className="w-full max-w-xs"
-                      />
-                    </div>
-
-                    {/* Client Rating */}
-                    <div className="space-y-2">
-                      <Label className="text-sm">Minimum Client Rating</Label>
-                      <div className="flex gap-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            onClick={() =>
-                              updateFilters({
-                                clientRating: filters.clientRating === star ? 0 : star,
-                              })
-                            }
-                            className="p-1"
-                          >
-                            <Star
-                              className={`w-5 h-5 ${
-                                star <= filters.clientRating
-                                  ? 'fill-status-pending text-status-pending'
-                                  : 'text-muted-foreground'
-                              }`}
-                            />
-                          </button>
-                        ))}
-                        {filters.clientRating > 0 && (
-                          <span className="ml-2 text-sm text-muted-foreground">
-                            {filters.clientRating}+ stars
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </CollapsibleContent>
-              </Card>
-            </Collapsible>
 
             {/* Actions */}
             <div className="flex gap-3 pt-2">
