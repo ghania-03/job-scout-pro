@@ -539,7 +539,7 @@ export default function JobFilters() {
 
                     {/* Number of Approvals */}
                     <div className="space-y-1.5">
-                      <Label className="text-sm">Minimum Approvals</Label>
+                      <Label className="text-sm">No. of Proposals</Label>
                       <Input
                         type="number"
                         min={0}
