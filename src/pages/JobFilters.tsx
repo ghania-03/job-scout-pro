@@ -275,7 +275,7 @@ export default function JobFilters() {
             {/* Invite Signals */}
             <Card className="border-border">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base font-medium">Invite Signals</CardTitle>
+                <CardTitle className="text-base font-medium">Sent</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-2">
