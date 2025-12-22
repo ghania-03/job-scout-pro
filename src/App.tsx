@@ -4,8 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/useTheme";
-import Index from "./pages/Index";
-import JobFilters from "./pages/JobFilters";
+import { AppLayout } from "@/components/layout/AppLayout";
+import Jobs from "./pages/Jobs";
 import AIPortfolio from "./pages/AIPortfolio";
 import ActivityLogs from "./pages/ActivityLogs";
 import NotFound from "./pages/NotFound";
@@ -19,14 +19,15 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/job-filters" element={<JobFilters />} />
-            <Route path="/ai-portfolio" element={<AIPortfolio />} />
-            <Route path="/activity-logs" element={<ActivityLogs />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AppLayout>
+            <Routes>
+              <Route path="/" element={<Jobs />} />
+              <Route path="/ai-portfolio" element={<AIPortfolio />} />
+              <Route path="/activity-logs" element={<ActivityLogs />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AppLayout>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
