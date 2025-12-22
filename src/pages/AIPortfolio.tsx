@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { PortfolioSection } from '@/components/portfolio/PortfolioSection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -35,9 +33,6 @@ export interface PortfolioData {
 
 const AIPortfolio = () => {
   const { toast } = useToast();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
-    return localStorage.getItem('bd-sidebar-collapsed') === 'true';
-  });
 
   const [portfolio, setPortfolio] = useState<PortfolioData>(() => {
     const saved = localStorage.getItem('bd-portfolio');
@@ -116,118 +111,103 @@ const AIPortfolio = () => {
   };
 
   return (
-    <div className="flex h-screen w-full bg-background overflow-hidden">
-      <DashboardSidebar
-        collapsed={sidebarCollapsed}
-        onToggle={() => {
-          const newState = !sidebarCollapsed;
-          setSidebarCollapsed(newState);
-          localStorage.setItem('bd-sidebar-collapsed', String(newState));
-        }}
-      />
+    <div className="flex-1 overflow-y-auto p-4 lg:p-6 custom-scrollbar">
+      <div className="max-w-[1200px] mx-auto space-y-6">
+        <div className="mb-4">
+          <h1 className="text-xl lg:text-2xl font-semibold text-foreground">
+            AI & Portfolio
+          </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Manage your portfolio and configure AI proposal generation
+          </p>
+        </div>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <DashboardHeader />
+        {/* Chatbot Model Selection - Minimal, at top */}
+        <Card className="border-border">
+          <CardHeader className="py-3 px-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Bot className="w-4 h-4 text-primary" />
+                <CardTitle className="text-sm font-medium">AI Model</CardTitle>
+              </div>
+              <Select value={chatbotModel} onValueChange={handleModelChange}>
+                <SelectTrigger className="w-[160px] h-8 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="chatgpt">ChatGPT</SelectItem>
+                  <SelectItem value="gpt4" disabled>GPT-4 (Coming Soon)</SelectItem>
+                  <SelectItem value="claude" disabled>Claude (Coming Soon)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardHeader>
+        </Card>
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6 custom-scrollbar">
-          <div className="max-w-[1200px] mx-auto space-y-6">
-            <div className="mb-4">
-              <h1 className="text-xl lg:text-2xl font-semibold text-foreground">
-                AI & Portfolio
-              </h1>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                Manage your portfolio and configure AI proposal generation
-              </p>
+        {/* Portfolio Management */}
+        <PortfolioSection
+          portfolio={portfolio}
+          onUpdate={handlePortfolioUpdate}
+        />
+
+        {/* AI Proposal Command Section */}
+        <Card className="border-border">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <CardTitle className="text-base font-medium">AI Proposal Command</CardTitle>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              This prompt is used to generate job-specific proposals on the Dashboard
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="ai-prompt" className="text-sm font-medium">
+                Prompt / Command
+              </Label>
+              <Textarea
+                id="ai-prompt"
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="Enter your AI prompt for generating proposals..."
+                className="min-h-[120px] resize-none"
+              />
             </div>
 
-            {/* Chatbot Model Selection - Minimal, at top */}
-            <Card className="border-border">
-              <CardHeader className="py-3 px-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Bot className="w-4 h-4 text-primary" />
-                    <CardTitle className="text-sm font-medium">AI Model</CardTitle>
-                  </div>
-                  <Select value={chatbotModel} onValueChange={handleModelChange}>
-                    <SelectTrigger className="w-[160px] h-8 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="chatgpt">ChatGPT</SelectItem>
-                      <SelectItem value="gpt4" disabled>GPT-4 (Coming Soon)</SelectItem>
-                      <SelectItem value="claude" disabled>Claude (Coming Soon)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardHeader>
-            </Card>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" onClick={handleSavePrompt}>
+                <Save className="w-3.5 h-3.5 mr-1.5" />
+                Save
+              </Button>
+              <Button size="sm" variant="outline" onClick={handleCopyPrompt}>
+                <Copy className="w-3.5 h-3.5 mr-1.5" />
+                Copy
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={handleGeneratePreview}
+                disabled={isGenerating}
+              >
+                <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${isGenerating ? 'animate-spin' : ''}`} />
+                {isGenerating ? 'Generating...' : 'Preview'}
+              </Button>
+            </div>
 
-            {/* Portfolio Management */}
-            <PortfolioSection
-              portfolio={portfolio}
-              onUpdate={handlePortfolioUpdate}
-            />
-
-            {/* AI Proposal Command Section */}
-            <Card className="border-border">
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  <CardTitle className="text-base font-medium">AI Proposal Command</CardTitle>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  This prompt is used to generate job-specific proposals on the Dashboard
+            {/* Preview Area */}
+            {previewProposal && (
+              <div className="mt-4 p-4 bg-muted/50 rounded-lg border border-border">
+                <Label className="text-sm font-medium text-muted-foreground mb-2 block">
+                  Preview Output
+                </Label>
+                <p className="text-sm text-foreground whitespace-pre-wrap">
+                  {previewProposal}
                 </p>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="ai-prompt" className="text-sm font-medium">
-                    Prompt / Command
-                  </Label>
-                  <Textarea
-                    id="ai-prompt"
-                    value={aiPrompt}
-                    onChange={(e) => setAiPrompt(e.target.value)}
-                    placeholder="Enter your AI prompt for generating proposals..."
-                    className="min-h-[120px] resize-none"
-                  />
-                </div>
-
-                <div className="flex flex-wrap gap-2">
-                  <Button size="sm" onClick={handleSavePrompt}>
-                    <Save className="w-3.5 h-3.5 mr-1.5" />
-                    Save
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={handleCopyPrompt}>
-                    <Copy className="w-3.5 h-3.5 mr-1.5" />
-                    Copy
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    onClick={handleGeneratePreview}
-                    disabled={isGenerating}
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${isGenerating ? 'animate-spin' : ''}`} />
-                    {isGenerating ? 'Generating...' : 'Preview'}
-                  </Button>
-                </div>
-
-                {/* Preview Area */}
-                {previewProposal && (
-                  <div className="mt-4 p-4 bg-muted/50 rounded-lg border border-border">
-                    <Label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Preview Output
-                    </Label>
-                    <p className="text-sm text-foreground whitespace-pre-wrap">
-                      {previewProposal}
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </main>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
