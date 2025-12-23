@@ -530,6 +530,20 @@ export default function Jobs() {
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <Checkbox
+                          id="budget-all"
+                          checked={isAllBudgetTypes}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              updateFilters({ hourlyEnabled: false, fixedEnabled: false });
+                            }
+                          }}
+                        />
+                        <Label htmlFor="budget-all" className="text-xs">
+                          All
+                        </Label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Checkbox
                           id="budget-hourly"
                           checked={filters.hourlyEnabled}
                           onCheckedChange={(checked) => updateFilters({ hourlyEnabled: !!checked })}
