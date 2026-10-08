@@ -1,73 +1,89 @@
-# Welcome to your Lovable project
+# Job Scout Pro
 
-## Project info
+Job Scout Pro is a browser-based dashboard for reviewing and organizing freelance job opportunities. It provides a sample job-tracking workflow with proposal, status, filtering, and portfolio tools.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Live Demo
 
-## How can I edit this code?
+> **Live Demo:** [Coming soon]
 
-There are several ways of editing your application.
+## Overview
 
-**Use Lovable**
+Job Scout Pro brings a job review workflow into one interface: users can inspect sample freelance listings, organize their status and notes, review proposal text, and configure job-search criteria. The project currently runs entirely on the client and uses bundled sample data to demonstrate the workflow.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+The current scope is a front-end prototype. It does not fetch live listings, connect to a backend, or call an external AI service. The proposal preview is a generated sample, and PDF/DOCX portfolio extraction is simulated; plain-text portfolio files can be read in the browser.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Features
 
-**Use your preferred IDE**
+- Dashboard with sample freelance job listings, proposal ratios, budgets, statuses, notes, and summary cards.
+- Table and card views, configurable visible columns, status/budget/proposal-ratio filters, and CSV export.
+- Job status updates and editable notes and proposal text.
+- Job-search filter controls for platform, keywords, budget, geography, invite status, proposal count, hiring rate, client verification, and rating. Filter settings are saved in browser storage.
+- Portfolio text entry and file upload interface for PDF, DOCX, and TXT files, with a portfolio preview.
+- Configurable proposal prompt with save and copy actions, a model selector, and a sample proposal preview.
+- Weekly activity view, light/dark theme toggle, and browser-storage persistence for selected preferences and portfolio settings.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Technology
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- React 18 and TypeScript
+- Vite
+- React Router
+- TanStack Query
+- Tailwind CSS
+- Radix UI primitives and reusable shadcn-style components
+- Lucide React icons
+- date-fns
 
-Follow these steps:
+## Project Structure
+
+```text
+job-scout-pro/
+├── public/
+│   ├── favicon.svg
+│   ├── placeholder.svg
+│   └── robots.txt
+├── src/
+│   ├── components/
+│   │   ├── dashboard/
+│   │   ├── filters/
+│   │   ├── layout/
+│   │   ├── portfolio/
+│   │   └── ui/
+│   ├── data/
+│   │   └── mockJobs.ts
+│   ├── hooks/
+│   ├── lib/
+│   ├── pages/
+│   │   ├── AIPortfolio.tsx
+│   │   ├── ActivityLogs.tsx
+│   │   ├── Jobs.tsx
+│   │   └── NotFound.tsx
+│   ├── types/
+│   ├── App.tsx
+│   ├── index.css
+│   └── main.tsx
+├── index.html
+├── package.json
+├── package-lock.json
+├── bun.lock
+├── vite.config.ts
+├── tailwind.config.ts
+└── tsconfig*.json
+```
+
+## Getting Started
+
+Requirements: Node.js and npm.
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+git clone https://github.com/ghania-03/job-scout-pro.git
+cd job-scout-pro
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The development server prints its local URL when it starts. To create a production build or check code style, run:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```sh
+npm run build
+npm run lint
+```

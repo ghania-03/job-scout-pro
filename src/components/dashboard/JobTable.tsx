@@ -86,7 +86,7 @@ export function JobTable({ jobs, onJobUpdate }: JobTableProps) {
 
   // Filter and sort jobs with smart ordering
   const processedJobs = useMemo(() => {
-    let result = jobs.filter((job) => {
+    const result = jobs.filter((job) => {
       if (filters.status.length > 0 && !filters.status.includes(job.status)) {
         return false;
       }
