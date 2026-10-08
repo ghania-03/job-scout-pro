@@ -4,7 +4,7 @@ Job Scout Pro is a browser-based dashboard for reviewing and organizing freelanc
 
 ## Live Demo
 
-> **Live Demo:** [Coming soon]
+> **Live Demo:** https://job-scout-pro-silk.vercel.app/
 
 ## Overview
 
